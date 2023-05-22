@@ -405,3 +405,107 @@ SELECT*FROM avtoraqam;
 
 SELECT mi_seq.CURRVAL
 FROM dual;
+
+
+--Sxemalar
+CREATE USER user_name_1 IDENTIFIED BY password_1 ;
+
+CREATE USER c##user_name_1 IDENTIFIED BY password_1 ;
+
+GRANT CREATE SESSION TO c##user_name_1 ;
+
+GRANT CREATE SESSION TO user_name_1 ;
+GRANT CREATE TABLE TO user_name_1 ;
+GRANT CREATE VIEW TO user_name_1 ;
+GRANT CREATE ANY TRIGGER TO user_name_1 ;
+GRANT CREATE ANY PROCEDURE TO user_name_1 ;
+GRANT CREATE SEQUENCE TO user_name_1 ;
+GRANT CREATE SYNONYM TO user_name_1 ;
+
+
+--Transaction
+COMMIT;
+
+CREATE TABLE sonlar (
+    col_1 NUMBER,
+    col_2 NUMBER
+);
+
+INSERT ALL
+INTO sonlar VALUES (1,1)
+INTO sonlar VALUES (2,4)
+INTO sonlar VALUES (3,9)
+INTO sonlar VALUES (4,16)
+SELECT * FROM dual;
+
+SELECT * FROM SONLAR;
+
+COMMIT;
+
+SET TRANSACTION NAME 'Qator yangilanishi 1' ;
+
+UPDATE sonlar
+SET col_2 = 0
+WHERE col_1 = 1;
+
+SELECT * FROM SONLAR;
+
+SAVEPOINT next_action_1;
+
+UPDATE sonlar
+SET col_2 = -1
+WHERE col_1 = 2;
+
+SELECT * FROM SONLAR;
+
+SAVEPOINT next_action_2;
+
+ROLLBACK TO SAVEPOINT next_action_1;
+
+SELECT * FROM SONLAR;
+
+UPDATE sonlar
+SET col_2 = -10
+WHERE col_1 = 3;
+
+ROLLBACK;
+
+SELECT * FROM SONLAR;
+
+INSERT ALL
+INTO sonlar VALUES (5,25)
+INTO sonlar VALUES (6,36)
+SELECT * FROM dual;
+
+COMMIT;
+
+SELECT * FROM sonlar;
+
+DELETE FROM sonlar
+WHERE col_1 = 6;
+
+SELECT * FROM sonlar;
+
+COMMIT;
+
+
+--PROCEDURE
+CREATE OR REPLACE PROCEDURE print_contact(
+    p_person_id NUMBER )
+IS
+   r_contact persons%ROWTYPE;
+BEGIN
+   -- get contact based on customer id
+    SELECT *
+    INTO r_contact
+    FROM persons
+    WHERE person_id = p_person_id;
+
+    -- print out contact’s information
+    dbms_output.put_line( r_contact.first_name || '' ||
+    r_contact.last_name || '<' || r_contact.contact ||'>' );
+
+EXCEPTION
+   WHEN OTHERS THEN
+      dbms_output.put_line( SQLERRM );
+END;
